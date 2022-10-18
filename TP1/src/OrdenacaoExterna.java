@@ -9,23 +9,26 @@ public class OrdenacaoExterna {
     static String nomeArquivoFinal = "";
 
     public static void main(String[] args) {
-        int tamanho = 0;
+        int ram = 0;
         int caminhos = 0;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Digite o tamanho de registros da ram:");
-        tamanho = scanner.nextInt();
+        ram = scanner.nextInt();
         System.out.println("Digite o numero de caminhos:");
         caminhos = scanner.nextInt();
         scanner.close();
-        limite = dist(tamanho, caminhos);
-        sort(tamanho,limite,caminhos);
+        limite = dist(ram, caminhos);//Variável que controla até quando devemos rodar a intercalação.
+        sort(ram,limite,caminhos);
 
     }
-    public static void sort(int tamanho, int limite, int caminhos){
+    public static void sort(int ram, int limite, int caminhos){
         boolean isBase = true;
-        while (tamanho < limite) {
-            intercalacao(tamanho, caminhos, isBase);
-            tamanho *= caminhos;
+        //ram = 4, caminhos 3, limite 50;
+        while (ram < limite) {
+                //4 < 50
+            intercalacao(ram, caminhos, isBase);
+            ram *= caminhos;
+            //4 = 4 * 3;
             isBase = !isBase;
         }
         System.out.println("\n---------------");
@@ -33,7 +36,10 @@ public class OrdenacaoExterna {
         System.out.println("Printando ids das contas ordenadas:");
         listAccouts(nomeArquivoFinal);
     }
-    public static int dist(int tam, int caminhos) {
+    public static int dist(int ram, int caminhos) {
+        /*Realiza a distribuição de acordo com o tamanho suportado pela ram (tam) e a quantidade de caminhos especificados
+         * por parametro.
+         */
         int quantidade = 0;
         try {
             List<Conta> contas = new ArrayList<>();
@@ -43,7 +49,7 @@ public class OrdenacaoExterna {
             }
             while (ptrControl != -1) {
                 for (int i = 0; i < caminhos; i++) {
-                    for (int j = 0; j < tam; j++) {
+                    for (int j = 0; j < ram; j++) {
                         var conta = readFile(nomeArquivo);
 //                        System.out.println(conta);
                         if (conta != null) {
@@ -68,18 +74,19 @@ public class OrdenacaoExterna {
             System.out.println("Erro dist. " + e.getMessage());
             e.printStackTrace();
         }
-        return quantidade;
+        return quantidade;//Retorna a quantidade total de registros do arquivo original
     }
-
-    public static void intercalacao(int tam, int caminhos, boolean isBase) {
+    public static void intercalacao(int ram, int caminhos, boolean isBase) {
         CustomFile[] temp1 = new CustomFile[caminhos];
         for (int i = 0; i < caminhos; i++) {
             temp1[i] = new CustomFile("output/tmp" + (isBase ? i : i + caminhos) + PREFIXO);
+            //Abrindo arquivos originais frutos da distribuição.
         }
 
         CustomFile[] temp2 = new CustomFile[caminhos];
         for (int i = 0; i < caminhos; i++) {
             temp2[i] = new CustomFile("output/tmp" + (isBase ? i + caminhos : i) + PREFIXO);
+            //A brindo arquivos temporarios auxiliares para intercalar
         }
 
         Map<CustomFile, Conta> map = new HashMap<>();
@@ -87,19 +94,16 @@ public class OrdenacaoExterna {
         try {
             while (true) {
                 for (int i = 0; i < caminhos; i++) {
-                    if (map.get(temp1[i]) == null && temp1[i].readRegisterSize < tam) {
-                        Conta conta = temp1[i].readNext();
+                    if (map.get(temp1[i]) == null && temp1[i].readRegisterSize < ram) {//Verifico se ainda existem registros pra ler
+                        Conta conta = temp1[i].readNext();//Instancio a conta lendo do arquivo temp1[i];
                         if (conta != null) {
-                            map.put(temp1[i], conta);
+                            map.put(temp1[i], conta);//Inserindo no hash map.
                         }
                     }
                 }
-
                 if (map.isEmpty()) break;
 
-                var ordered = map.entrySet()
-                        .stream()
-                        .sorted(Map.Entry.comparingByValue()).toList();
+                var ordered = map.entrySet().stream().sorted(Map.Entry.comparingByValue()).toList();
                 var firstConta = ordered.get(0);
 
                 temp2[tempPos].writeConta(firstConta.getValue());
@@ -107,7 +111,7 @@ public class OrdenacaoExterna {
                     nomeArquivoFinal = temp2[tempPos].fileName;
                     break;
                 }
-                if (temp2[tempPos].size % (tam * caminhos) == 0) {
+                if (temp2[tempPos].size % (ram * caminhos) == 0) {
                     tempPos++;
                     if (tempPos == caminhos) {
                         tempPos = 0;
@@ -126,7 +130,6 @@ public class OrdenacaoExterna {
             e.printStackTrace();
         }
     }
-
     public static Conta readFile(String fileName) {
         char lapide;
         int tamanho;
@@ -151,7 +154,6 @@ public class OrdenacaoExterna {
         }
         return null;
     }
-
     public static void listAccouts(String nome) {
         byte[] array;
         char lapide;

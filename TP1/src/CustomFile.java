@@ -3,9 +3,9 @@ import java.io.RandomAccessFile;
 
 public class CustomFile {
     public RandomAccessFile file;
-    public int size;
-    public int readRegisterSize;
-    public String fileName;
+    public int size;//Controla a quantidade de registros que foram escritos nesse arquivo.
+    public int readRegisterSize;//Variavel que serve pra controlar o numero de registros lidos, pra não ultrapassar o limite da ram.
+    public String fileName;//Nome do arquivo
 
     public CustomFile(String path) {
         try {
