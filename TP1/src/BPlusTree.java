@@ -603,6 +603,7 @@ public class BPlusTree {
         raf.close();
         System.out.println("Conta encontrada:");
         System.out.println(conta.toString());
+        raf.close();
         return conta;
       }
 

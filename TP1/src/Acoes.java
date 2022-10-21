@@ -54,6 +54,7 @@ public class Acoes {
         }
     }
     public static void criaContasRandom(Scanner scanner) {
+        scanner.nextLine();
         System.out.println("Digite o numero de contas a ser criada:");
         int numeroDeContas = Integer.parseInt(scanner.nextLine());
         ArrayList<Conta> contas = new ArrayList<>();

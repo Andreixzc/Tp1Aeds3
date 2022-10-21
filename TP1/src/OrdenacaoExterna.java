@@ -41,7 +41,7 @@ public class OrdenacaoExterna {
         }
         System.out.println("\n---------------");
         System.out.println("Arquivo final: " + nomeArquivoFinal);
-        System.out.println("Printando ids das contas ordenadas:");
+        System.out.println("Printando ids das contas \"ordenadas\"\":");
         listAccouts(nomeArquivoFinal);
     }
     public static int distribuicao(int ram, int caminhos) {
