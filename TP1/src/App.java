@@ -5,6 +5,8 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
+        OrdenacaoExterna ordenacaoExterna = new OrdenacaoExterna();
+        BPlusTree bPlusTree = new BPlusTree(5);
         int opcao = -1;
         do {
             menu();
@@ -29,7 +31,27 @@ public class App {
                 }
             }
         } while (opcao != 0);
+        ordenacaoExterna =  externalSortMenu(scanner);
+        ordenacaoExterna.intercalacao();
 
+        bPlusTree.criaArvore();
+        bPlusTree.search(3);
+        
+        
+
+    }
+    public static OrdenacaoExterna externalSortMenu(Scanner scanner){
+        int caminhos;
+        int ram;
+        System.out.println("Ordenacao externa:");
+        System.out.println("Digite o numero de caminhos:");
+        caminhos = Integer.parseInt(scanner.nextLine());
+        System.out.println("Digite a quantidade de limitacao de memoria ram:");
+        ram = Integer.parseInt(scanner.nextLine());
+        OrdenacaoExterna ordenacaoExterna = new OrdenacaoExterna(ram, caminhos);
+        return ordenacaoExterna;
+
+        
     }
     public static void menu() {
         System.out.println("\nMENU:");

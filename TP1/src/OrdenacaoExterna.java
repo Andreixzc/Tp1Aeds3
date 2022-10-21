@@ -2,26 +2,34 @@ import java.io.RandomAccessFile;
 import java.util.*;
 
 public class OrdenacaoExterna {
-    static final String nomeArquivo = "output/conta.db";
-    static final String PREFIXO = ".db";
-    static long ptrControl = 4;
-    static int limite;
-    static String nomeArquivoFinal = "";
+    private static final String nomeArquivo = "output/conta.db";
+    private static final String PREFIXO = ".db";
+    private static long ptrControl = 4;
+    private static int limite;
+    private static String nomeArquivoFinal = "";
+    private int ram;
+    private int caminhos;
 
-    public static void main(String[] args) {
-        int ram = 0;
-        int caminhos = 0;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Digite o tamanho de registros da ram:");
-        ram = scanner.nextInt();
-        System.out.println("Digite o numero de caminhos:");
-        caminhos = scanner.nextInt();
-        scanner.close();
-        limite = dist(ram, caminhos);//Variável que controla até quando devemos rodar a intercalação.
-        sort(ram,limite,caminhos);
+    // public static void main(String[] args) {
+    //     int ram = 0;
+    //     int caminhos = 0;
+    //     Scanner scanner = new Scanner(System.in);
+    //     System.out.println("Digite o tamanho de registros da ram:");
+    //     ram = scanner.nextInt();
+    //     System.out.println("Digite o numero de caminhos:");
+    //     caminhos = scanner.nextInt();
+    //     scanner.close();
+    //     limite = dist(ram, caminhos);//Variável que controla até quando devemos rodar a intercalação.
+    //     sort(ram,limite,caminhos);
 
+    // }
+    public OrdenacaoExterna(){};
+    public OrdenacaoExterna(int ram, int caminhos){
+        this.ram = ram;
+        this.caminhos = caminhos;
+        OrdenacaoExterna.limite = distribuicao(ram, caminhos);
     }
-    public static void sort(int ram, int limite, int caminhos){
+    public void intercalacao(){
         boolean isBase = true;
         //ram = 4, caminhos 3, limite 50;
         while (ram < limite) {
@@ -36,7 +44,7 @@ public class OrdenacaoExterna {
         System.out.println("Printando ids das contas ordenadas:");
         listAccouts(nomeArquivoFinal);
     }
-    public static int dist(int ram, int caminhos) {
+    public static int distribuicao(int ram, int caminhos) {
         /*Realiza a distribuição de acordo com o tamanho suportado pela ram (tam) e a quantidade de caminhos especificados
          * por parametro.
          */

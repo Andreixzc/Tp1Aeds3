@@ -558,7 +558,7 @@ public class BPlusTree {
       }
     }
   }
-  public void criaArvore(BPlusTree bpt){
+  public void criaArvore(){
     try {
       RandomAccessFile raf = new RandomAccessFile("output/conta.db", "rw");
       raf.seek(4);
@@ -575,8 +575,8 @@ public class BPlusTree {
         if (lapide!= '*') {
           Conta conta = new Conta();
           conta.decodificaByteArray(ba);
-          // System.out.println("Conta id: " +conta.idConta + " Pos do ponteiro: " + pos);
-          bpt.insert(conta.idConta, pos);
+          System.out.println("Inserindo conta de Id: " +conta.idConta + ", e sua posicao no arquivo eh: " + pos);
+          this.insert(conta.idConta, pos);
         }
       }
       raf.close();
@@ -613,11 +613,4 @@ public class BPlusTree {
     }
     return null;
   }
-  
-  public static void main(String[] args) {
-    BPlusTree bpt = null;
-    bpt = new BPlusTree(4);
-    bpt.criaArvore(bpt);
-    bpt.buscaIndexada(3);  
-}
 }

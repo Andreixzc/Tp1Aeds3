@@ -97,6 +97,7 @@ public class Crud {
         try {
             RandomAccessFile arquivo = new RandomAccessFile(nomeArquivo, "rw");
             arquivo.seek(4);
+            System.out.println("Listando os ID's das contas em ordem:");
             while (arquivo.getFilePointer() != -1) {
                 lapide = arquivo.readChar();
                 array = new byte[arquivo.readInt()];
