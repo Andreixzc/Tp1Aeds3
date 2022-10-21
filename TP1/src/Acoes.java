@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Acoes {
@@ -51,6 +54,15 @@ public class Acoes {
             System.out.println("Conta deletada com sucesso");
         } else {
             System.out.println("Erro ao deletar conta");
+        }
+    }
+    public static void criaContasRandom(Scanner scanner) {
+        System.out.println("Digite o numero de contas a ser criada:");
+        int numeroDeContas = Integer.parseInt(scanner.nextLine());
+        ArrayList<Conta> contas = new ArrayList<>();
+        contas = Crud.createRandomAccounts(numeroDeContas);
+        for (Conta conta : contas) {
+            Crud.writeAccount(conta);
         }
     }
 

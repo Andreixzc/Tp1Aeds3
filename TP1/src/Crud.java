@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Crud {
@@ -10,6 +11,7 @@ public class Crud {
 
     public static Conta geradorDeConta(Scanner scanner){
         Conta conta = new Conta();
+        conta.idConta = getLastId();
         System.out.println("Digite seu nome: ");
         conta.nomePessoa = scanner.nextLine();
         System.out.println("Digite seu email: ");
@@ -51,6 +53,7 @@ public class Crud {
         return conta;
     }
 
+  
 
     public static void writeAccount(Conta conta) {
         try {
@@ -231,11 +234,20 @@ public class Crud {
         return update(contaOrigem) && update(contaDestino);
     }
 
-    public static Conta createAccount() {
-        int  id = (int) (Math.random() * 100);
-        Conta conta =
-                new Conta(id, "andrei", "mail", "nomeUser", "senha", "123", "ita", 0, 2f);
-        return conta;
+    public static ArrayList<Conta> createRandomAccounts(int totalContas) {
+        ArrayList<Integer> idsRandom = new ArrayList<>();
+        ArrayList<Conta> contas = new ArrayList<>();
+
+        for (int i = 0; i < totalContas; i++) {
+            idsRandom.add(i);
+        }
+        Collections.shuffle(idsRandom);
+
+        for (int i = 0; i < totalContas; i++) {
+            Conta conta = new Conta(i, "andrei"+i, "mail"+i, "nomeUser"+i, "senha"+i, "123"+i, "bh"+i, 0, 2f);
+            contas.add(conta);
+        }
+        return contas;
     }
 
     public static Conta createAccount2() {
