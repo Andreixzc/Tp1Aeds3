@@ -1,5 +1,3 @@
-// Searching on a B+ tree in Java
-
 import java.io.RandomAccessFile;
 import java.util.*;
 public class BPlusTree {

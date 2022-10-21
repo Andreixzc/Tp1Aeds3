@@ -62,7 +62,7 @@ public class App {
         System.out.println("5- Deletar um registro");
         System.out.println("6- Criar N com id''s desordenados:(desconsiderando limitacao na memoria)");
         System.out.println("7- Listar contas");
-        System.out.println("0- Sair do programa");
+        System.out.println("0- Sair do menu de crud");
     }
 
 }
