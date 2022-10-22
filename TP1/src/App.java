@@ -34,11 +34,14 @@ public class App {
             }
         } while (opcao != 0);
 
+        System.out.println("Intercalacao:");
         ordenacaoExterna = externalSortMenu(scanner);
         ordenacaoExterna.intercalacao();
         
+        System.out.println("Insersao na arvore:");
         bPlusTree.criaArvore();
         bPlusTree.search(3);
+
 
         deleteFiles();
     }
@@ -56,7 +59,6 @@ public class App {
         for (File file : files) {
             file.delete();
         }
-        //9
 
     }
 

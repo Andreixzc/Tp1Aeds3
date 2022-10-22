@@ -1,11 +1,12 @@
 import java.io.RandomAccessFile;
 import java.util.*;
+
 public class BPlusTree {
   int m;
-  InternalNode root;
-  LeafNode firstLeaf;
+  nodeInterno raiz;
+  nodeFolha firstLeaf;
 
-  // Binary search program
+
   private int binarySearch(DictionaryPair[] dps, int numPairs, int t) {
     Comparator<DictionaryPair> c = new Comparator<DictionaryPair>() {
       @Override
@@ -18,28 +19,28 @@ public class BPlusTree {
     return Arrays.binarySearch(dps, 0, numPairs, new DictionaryPair(t, 0), c);
   }
 
-  // Find the leaf node
-  private LeafNode findLeafNode(int key) {
 
-    Integer[] keys = this.root.keys;
+  private nodeFolha findnodeFolha(int key) {
+
+    Integer[] keys = this.raiz.keys;
     int i;
 
-    for (i = 0; i < this.root.degree - 1; i++) {
+    for (i = 0; i < this.raiz.degree - 1; i++) {
       if (key < keys[i]) {
         break;
       }
     }
 
-    Node child = this.root.childPointers[i];
-    if (child instanceof LeafNode) {
-      return (LeafNode) child;
+    Node child = this.raiz.childPointers[i];
+    if (child instanceof nodeFolha) {
+      return (nodeFolha) child;
     } else {
-      return findLeafNode((InternalNode) child, key);
+      return findnodeFolha((nodeInterno) child, key);
     }
   }
 
-  // Find the leaf node
-  private LeafNode findLeafNode(InternalNode node, int key) {
+
+  private nodeFolha findnodeFolha(nodeInterno node, int key) {
 
     Integer[] keys = node.keys;
     int i;
@@ -50,89 +51,15 @@ public class BPlusTree {
       }
     }
     Node childNode = node.childPointers[i];
-    if (childNode instanceof LeafNode) {
-      return (LeafNode) childNode;
+    if (childNode instanceof nodeFolha) {
+      return (nodeFolha) childNode;
     } else {
-      return findLeafNode((InternalNode) node.childPointers[i], key);
+      return findnodeFolha((nodeInterno) node.childPointers[i], key);
     }
   }
 
-  // Finding the index of the pointer
-  private int findIndexOfPointer(Node[] pointers, LeafNode node) {
-    int i;
-    for (i = 0; i < pointers.length; i++) {
-      if (pointers[i] == node) {
-        break;
-      }
-    }
-    return i;
-  }
-
-  // Get the mid point
   private int getMidpoint() {
     return (int) Math.ceil((this.m + 1) / 2.0) - 1;
-  }
-
-  // Balance the tree
-  private void handleDeficiency(InternalNode in) {
-
-    InternalNode sibling;
-    InternalNode parent = in.parent;
-
-    if (this.root == in) {
-      for (int i = 0; i < in.childPointers.length; i++) {
-        if (in.childPointers[i] != null) {
-          if (in.childPointers[i] instanceof InternalNode) {
-            this.root = (InternalNode) in.childPointers[i];
-            this.root.parent = null;
-          } else if (in.childPointers[i] instanceof LeafNode) {
-            this.root = null;
-          }
-        }
-      }
-    }
-
-    else if (in.leftSibling != null && in.leftSibling.isLendable()) {
-      sibling = in.leftSibling;
-    } else if (in.rightSibling != null && in.rightSibling.isLendable()) {
-      sibling = in.rightSibling;
-
-      int borrowedKey = sibling.keys[0];
-      Node pointer = sibling.childPointers[0];
-
-      in.keys[in.degree - 1] = parent.keys[0];
-      in.childPointers[in.degree] = pointer;
-
-      parent.keys[0] = borrowedKey;
-
-      sibling.removePointer(0);
-      Arrays.sort(sibling.keys);
-      sibling.removePointer(0);
-      shiftDown(in.childPointers, 1);
-    } else if (in.leftSibling != null && in.leftSibling.isMergeable()) {
-
-    } else if (in.rightSibling != null && in.rightSibling.isMergeable()) {
-      sibling = in.rightSibling;
-      sibling.keys[sibling.degree - 1] = parent.keys[parent.degree - 2];
-      Arrays.sort(sibling.keys, 0, sibling.degree);
-      parent.keys[parent.degree - 2] = null;
-
-      for (int i = 0; i < in.childPointers.length; i++) {
-        if (in.childPointers[i] != null) {
-          sibling.prependChildPointer(in.childPointers[i]);
-          in.childPointers[i].parent = sibling;
-          in.removePointer(i);
-        }
-      }
-
-      parent.removePointer(in);
-
-      sibling.leftSibling = in.leftSibling;
-    }
-
-    if (parent != null && parent.isDeficient()) {
-      handleDeficiency(parent);
-    }
   }
 
   private boolean isEmpty() {
@@ -157,13 +84,6 @@ public class BPlusTree {
     return -1;
   }
 
-  private void shiftDown(Node[] pointers, int amount) {
-    Node[] newPointers = new Node[this.m + 1];
-    for (int i = amount; i < pointers.length; i++) {
-      newPointers[i - amount] = pointers[i];
-    }
-    pointers = newPointers;
-  }
 
   private void sortDictionary(DictionaryPair[] dictionary) {
     Arrays.sort(dictionary, new Comparator<DictionaryPair>() {
@@ -183,7 +103,7 @@ public class BPlusTree {
     });
   }
 
-  private Node[] splitChildPointers(InternalNode in, int split) {
+  private Node[] splitChildPointers(nodeInterno in, int split) {
 
     Node[] pointers = in.childPointers;
     Node[] halfPointers = new Node[this.m + 1];
@@ -196,7 +116,7 @@ public class BPlusTree {
     return halfPointers;
   }
 
-  private DictionaryPair[] splitDictionary(LeafNode ln, int split) {
+  private DictionaryPair[] splitDictionary(nodeFolha ln, int split) {
 
     DictionaryPair[] dictionary = ln.dictionary;
 
@@ -210,9 +130,9 @@ public class BPlusTree {
     return halfDict;
   }
 
-  private void splitInternalNode(InternalNode in) {
+  private void splitnodeInterno(nodeInterno in) {
 
-    InternalNode parent = in.parent;
+    nodeInterno parent = in.parent;
 
     int midpoint = getMidpoint();
     int newParentKey = in.keys[midpoint];
@@ -221,31 +141,31 @@ public class BPlusTree {
 
     in.degree = linearNullSearch(in.childPointers);
 
-    InternalNode sibling = new InternalNode(this.m, halfKeys, halfPointers);
+    nodeInterno sibling = new nodeInterno(this.m, halfKeys, halfPointers);
     for (Node pointer : halfPointers) {
       if (pointer != null) {
         pointer.parent = sibling;
       }
     }
 
-    sibling.rightSibling = in.rightSibling;
-    if (sibling.rightSibling != null) {
-      sibling.rightSibling.leftSibling = sibling;
+    sibling.dir = in.dir;
+    if (sibling.dir != null) {
+      sibling.dir.esq = sibling;
     }
-    in.rightSibling = sibling;
-    sibling.leftSibling = in;
+    in.dir = sibling;
+    sibling.esq = in;
 
     if (parent == null) {
 
       Integer[] keys = new Integer[this.m];
       keys[0] = newParentKey;
-      InternalNode newRoot = new InternalNode(this.m, keys);
-      newRoot.appendChildPointer(in);
-      newRoot.appendChildPointer(sibling);
-      this.root = newRoot;
+      nodeInterno newraiz = new nodeInterno(this.m, keys);
+      newraiz.appendChildPointer(in);
+      newraiz.appendChildPointer(sibling);
+      this.raiz = newraiz;
 
-      in.parent = newRoot;
-      sibling.parent = newRoot;
+      in.parent = newraiz;
+      sibling.parent = newraiz;
 
     } else {
 
@@ -277,14 +197,14 @@ public class BPlusTree {
       // System.out.println(key);
       // System.out.println(value);
 
-      LeafNode ln = new LeafNode(this.m, new DictionaryPair(key, value));
+      nodeFolha ln = new nodeFolha(this.m, new DictionaryPair(key, value));
 
       this.firstLeaf = ln;
 
     } else {
       // System.out.println(key);
       // System.out.println(value);
-      LeafNode ln = (this.root == null) ? this.firstLeaf : findLeafNode(key);
+      nodeFolha ln = (this.raiz == null) ? this.firstLeaf : findnodeFolha(key);
 
       if (!ln.insert(new DictionaryPair(key, value))) {
 
@@ -299,7 +219,7 @@ public class BPlusTree {
 
           Integer[] parent_keys = new Integer[this.m];
           parent_keys[0] = halfDict[0].key;
-          InternalNode parent = new InternalNode(this.m, parent_keys);
+          nodeInterno parent = new nodeInterno(this.m, parent_keys);
           ln.parent = parent;
           parent.appendChildPointer(ln);
 
@@ -309,27 +229,27 @@ public class BPlusTree {
           Arrays.sort(ln.parent.keys, 0, ln.parent.degree);
         }
 
-        LeafNode newLeafNode = new LeafNode(this.m, halfDict, ln.parent);
+        nodeFolha newnodeFolha = new nodeFolha(this.m, halfDict, ln.parent);
 
         int pointerIndex = ln.parent.findIndexOfPointer(ln) + 1;
-        ln.parent.insertChildPointer(newLeafNode, pointerIndex);
+        ln.parent.insertChildPointer(newnodeFolha, pointerIndex);
 
-        newLeafNode.rightSibling = ln.rightSibling;
-        if (newLeafNode.rightSibling != null) {
-          newLeafNode.rightSibling.leftSibling = newLeafNode;
+        newnodeFolha.dir = ln.dir;
+        if (newnodeFolha.dir != null) {
+          newnodeFolha.dir.esq = newnodeFolha;
         }
-        ln.rightSibling = newLeafNode;
-        newLeafNode.leftSibling = ln;
+        ln.dir = newnodeFolha;
+        newnodeFolha.esq = ln;
 
-        if (this.root == null) {
+        if (this.raiz == null) {
 
-          this.root = ln.parent;
+          this.raiz = ln.parent;
 
         } else {
-          InternalNode in = ln.parent;
+          nodeInterno in = ln.parent;
           while (in != null) {
             if (in.isOverfull()) {
-              splitInternalNode(in);
+              splitnodeInterno(in);
             } else {
               break;
             }
@@ -346,7 +266,7 @@ public class BPlusTree {
       return null;
     }
 
-    LeafNode ln = (this.root == null) ? this.firstLeaf : findLeafNode(key);
+    nodeFolha ln = (this.raiz == null) ? this.firstLeaf : findnodeFolha(key);
 
     DictionaryPair[] dps = ln.dictionary;
     int index = binarySearch(dps, ln.numPairs, key);
@@ -362,7 +282,7 @@ public class BPlusTree {
 
     ArrayList<Double> values = new ArrayList<Double>();
 
-    LeafNode currNode = this.firstLeaf;
+    nodeFolha currNode = this.firstLeaf;
     while (currNode != null) {
 
       DictionaryPair dps[] = currNode.dictionary;
@@ -376,7 +296,7 @@ public class BPlusTree {
           values.add(dp.value);
         }
       }
-      currNode = currNode.rightSibling;
+      currNode = currNode.dir;
 
     }
 
@@ -385,19 +305,19 @@ public class BPlusTree {
 
   public BPlusTree(int m) {
     this.m = m;
-    this.root = null;
+    this.raiz = null;
   }
 
   public class Node {
-    InternalNode parent;
+    nodeInterno parent;
   }
 
-  private class InternalNode extends Node {
+  private class nodeInterno extends Node {
     int maxDegree;
     int minDegree;
     int degree;
-    InternalNode leftSibling;
-    InternalNode rightSibling;
+    nodeInterno esq;
+    nodeInterno dir;
     Integer[] keys;
     Node[] childPointers;
 
@@ -423,49 +343,19 @@ public class BPlusTree {
       this.degree++;
     }
 
-    private boolean isDeficient() {
-      return this.degree < this.minDegree;
-    }
-
-    private boolean isLendable() {
-      return this.degree > this.minDegree;
-    }
-
-    private boolean isMergeable() {
-      return this.degree == this.minDegree;
-    }
 
     private boolean isOverfull() {
       return this.degree == maxDegree + 1;
     }
 
-    private void prependChildPointer(Node pointer) {
-      for (int i = degree - 1; i >= 0; i--) {
-        childPointers[i + 1] = childPointers[i];
-      }
-      this.childPointers[0] = pointer;
-      this.degree++;
-    }
-
-    private void removeKey(int index) {
-      this.keys[index] = null;
-    }
 
     private void removePointer(int index) {
       this.childPointers[index] = null;
       this.degree--;
     }
 
-    private void removePointer(Node pointer) {
-      for (int i = 0; i < childPointers.length; i++) {
-        if (childPointers[i] == pointer) {
-          this.childPointers[i] = null;
-        }
-      }
-      this.degree--;
-    }
 
-    private InternalNode(int m, Integer[] keys) {
+    private nodeInterno(int m, Integer[] keys) {
       this.maxDegree = m;
       this.minDegree = (int) Math.ceil(m / 2.0);
       this.degree = 0;
@@ -473,7 +363,7 @@ public class BPlusTree {
       this.childPointers = new Node[this.maxDegree + 1];
     }
 
-    private InternalNode(int m, Integer[] keys, Node[] pointers) {
+    private nodeInterno(int m, Integer[] keys, Node[] pointers) {
       this.maxDegree = m;
       this.minDegree = (int) Math.ceil(m / 2.0);
       this.degree = linearNullSearch(pointers);
@@ -482,12 +372,12 @@ public class BPlusTree {
     }
   }
 
-  public class LeafNode extends Node {
+  public class nodeFolha extends Node {
     int maxNumPairs;
     int minNumPairs;
     int numPairs;
-    LeafNode leftSibling;
-    LeafNode rightSibling;
+    nodeFolha esq;
+    nodeFolha dir;
     DictionaryPair[] dictionary;
 
     public void delete(int index) {
@@ -522,14 +412,16 @@ public class BPlusTree {
     public boolean isMergeable() {
       return numPairs == minNumPairs;
     }
-    public LeafNode(int m, DictionaryPair dp) {
+
+    public nodeFolha(int m, DictionaryPair dp) {
       this.maxNumPairs = m - 1;
       this.minNumPairs = (int) (Math.ceil(m / 2) - 1);
       this.dictionary = new DictionaryPair[m];
       this.numPairs = 0;
       this.insert(dp);
     }
-    public LeafNode(int m, DictionaryPair[] dps, InternalNode parent) {
+
+    public nodeFolha(int m, DictionaryPair[] dps, nodeInterno parent) {
       this.maxNumPairs = m - 1;
       this.minNumPairs = (int) (Math.ceil(m / 2) - 1);
       this.dictionary = dps;
@@ -556,8 +448,10 @@ public class BPlusTree {
       }
     }
   }
-  public void criaArvore(){
+
+  public void criaArvore() {
     try {
+      // Loopa pelo arquivo de dados inserindo sua chave/valor na árvore:
       RandomAccessFile raf = new RandomAccessFile("output/conta.db", "rw");
       raf.seek(4);
       long pos;
@@ -570,22 +464,25 @@ public class BPlusTree {
         tamanho = raf.readInt();
         ba = new byte[tamanho];
         raf.read(ba);
-        if (lapide!= '*') {
+        if (lapide != '*') {
           Conta conta = new Conta();
           conta.decodificaByteArray(ba);
-          System.out.println("Inserindo conta de Id: " +conta.idConta + ", e sua posicao no arquivo eh: " + pos);
+          System.out.println(
+              "Inserindo conta de Id: " + conta.idConta + ", e sua posicao no arquivo eh: " + pos);
           this.insert(conta.idConta, pos);
         }
       }
       raf.close();
     } catch (Exception e) {
     }
-    
+
   }
-  public Conta buscaIndexada(int chave){
+
+  public Conta buscaIndexada(int chave) {
     return buscaIndexada(search(chave));
   }
-  public Conta buscaIndexada(double posRegistro){
+
+  public Conta buscaIndexada(double posRegistro) {
     try {
       RandomAccessFile raf = new RandomAccessFile("output/conta.db", "rw");
       long pos = Double.valueOf(posRegistro).longValue();
@@ -597,7 +494,7 @@ public class BPlusTree {
       tamanho = raf.readInt();
       ba = new byte[tamanho];
       raf.read(ba);
-      if (lapide!= '*') {
+      if (lapide != '*') {
         Conta conta = new Conta();
         conta.decodificaByteArray(ba);
         raf.close();
