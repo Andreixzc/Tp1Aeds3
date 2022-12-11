@@ -47,9 +47,10 @@ public class App {
                 } else if (opcao == 11) {
                     lzwAux();
                 } else if (opcao == 12) {
+                    scanner.nextLine();
                     System.out.println("Digite o padrao a ser pesquisado:");
                     String str = scanner.nextLine();
-                    kmp_String_Matching.KMPSearch(extraiTexto(str), str);
+                    kmp_String_Matching.KMPSearch(str,Crud.extraiTexto().toString());
                 }
             }
         } while (opcao != 0);

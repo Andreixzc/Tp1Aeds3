@@ -279,7 +279,7 @@ public class Crud {
     public static Conta createAccount2() {
 
         Conta conta =
-                new Conta(1, "andreiCaralho", "mail", "nomeUser", "senha", "123", "ita", 0, 2f);
+                new Conta(1, "andreiCaralho", "mail", "nomeUser", criptografaSenha("senha"), "123", "ita", 0, 2f);
         return conta;
     }
 

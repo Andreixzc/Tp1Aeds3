@@ -1,36 +1,33 @@
-// JAVA program for implementation of KMP pattern
+// JAVA program for implementation of KMP padraotern
 // searching algorithm
 
 class KMP_String_Matching {
-	void KMPSearch(String pat, String txt)
-	{
-		int M = pat.length();
-		int N = txt.length();
+	void KMPSearch(String padrao, String texto) {
+		int M = padrao.length();
+		int N = texto.length();
 
 		// create lps[] that will hold the longest
-		// prefix suffix values for pattern
+		// prefix suffix values for padraotern
 		int lps[] = new int[M];
-		int j = 0; // index for pat[]
+		int j = 0; // index for padrao[]
 
-		// Preprocess the pattern (calculate lps[]
+		// Preprocess the padraotern (calculate lps[]
 		// array)
-		computeLPSArray(pat, M, lps);
+		computeLPSArray(padrao, M, lps);
 
-		int i = 0; // index for txt[]
+		int i = 0; // index for texto[]
 		while ((N - i) >= (M - j)) {
-			if (pat.charAt(j) == txt.charAt(i)) {
+			if (padrao.charAt(j) == texto.charAt(i)) {
 				j++;
 				i++;
 			}
 			if (j == M) {
-				System.out.println("Found pattern "
-								+ "at index " + (i - j));
+				System.out.println("Padrao encontrado " + "no indice " + (i - j));
 				j = lps[j - 1];
 			}
 
 			// mismatch after j matches
-			else if (i < N
-					&& pat.charAt(j) != txt.charAt(i)) {
+			else if (i < N && padrao.charAt(j) != texto.charAt(i)) {
 				// Do not match lps[0..lps[j-1]] characters,
 				// they will match anyway
 				if (j != 0)
@@ -41,8 +38,7 @@ class KMP_String_Matching {
 		}
 	}
 
-	void computeLPSArray(String pat, int M, int lps[])
-	{
+	void computeLPSArray(String padrao, int M, int lps[]) {
 		// length of the previous longest prefix suffix
 		int len = 0;
 		int i = 1;
@@ -50,12 +46,11 @@ class KMP_String_Matching {
 
 		// the loop calculates lps[i] for i = 1 to M-1
 		while (i < M) {
-			if (pat.charAt(i) == pat.charAt(len)) {
+			if (padrao.charAt(i) == padrao.charAt(len)) {
 				len++;
 				lps[i] = len;
 				i++;
-			}
-			else // (pat[i] != pat[len])
+			} else // (padrao[i] != padrao[len])
 			{
 				// This is tricky. Consider the example.
 				// AAACAAAA and i = 7. The idea is similar
@@ -65,8 +60,7 @@ class KMP_String_Matching {
 
 					// Also, note that we do not increment
 					// i here
-				}
-				else // if (len == 0)
+				} else // if (len == 0)
 				{
 					lps[i] = len;
 					i++;
@@ -75,12 +69,4 @@ class KMP_String_Matching {
 		}
 	}
 
-	// Driver code
-	public static void main(String args[])
-	{
-		String txt = "ABABDABACDABABCABAB";
-		String pat = "ABABCABAB";
-		new KMP_String_Matching().KMPSearch(pat, txt);
-	}
 }
-// This code has been contributed by Amit Khandelwal.
