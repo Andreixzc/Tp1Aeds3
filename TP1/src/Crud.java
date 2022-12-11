@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Crud {
     final static String nomeArquivo = "output/conta.db";
-    
+    final static int cesarKey = 3;
     public Crud() {}
 
     public static Conta geradorDeConta(Scanner scanner){
@@ -42,7 +42,7 @@ public class Crud {
         System.out.println("Digite seu nome de usuario:");
         conta.nomeUsuario = scanner.nextLine();
         System.out.println("Digite sua senha:");
-        conta.senha = scanner.nextLine();
+        conta.senha = criptografaSenha(scanner.nextLine());
         System.out.println("Digite seu CPF");
         conta.cpf = scanner.nextLine();
         System.out.println("Digite sua cidade:");
@@ -52,8 +52,32 @@ public class Crud {
         conta.transferenciasRealizadas = 0;
         return conta;
     }
-
-  
+    public static StringBuilder extraiTexto(){
+        StringBuilder content = new StringBuilder();
+        byte[] array;
+        char lapide;
+        try {
+            RandomAccessFile arquivo = new RandomAccessFile(nomeArquivo, "rw");
+            content.append(arquivo.readInt());
+            arquivo.seek(4);
+            // System.out.println("Listando os ID's das contas no arquivo:");
+            while (arquivo.getFilePointer() != -1) {
+                lapide = arquivo.readChar();
+                array = new byte[arquivo.readInt()];
+                arquivo.read(array);
+                if (lapide != '*') {
+                    Conta conta = new Conta();
+                    conta.decodificaByteArray(array);
+                    content.append(conta);
+                    // System.out.print(conta.idConta+",");
+                }
+            }
+            arquivo.close();
+            return content;
+        } catch (Exception e) {
+        }
+        return content;
+    }
 
     public static void writeAccount(Conta conta) {
         try {
@@ -137,6 +161,7 @@ public class Crud {
                     if (conta.idConta == id) {
                         arquivo.seek(pos);
                         arquivo.close();
+                        conta.senha = descriptografaSenha(conta.senha);
                         return conta;
                     }
                 }
@@ -257,4 +282,36 @@ public class Crud {
                 new Conta(1, "andreiCaralho", "mail", "nomeUser", "senha", "123", "ita", 0, 2f);
         return conta;
     }
+
+
+    public static String criptografaSenha(String str) {
+        int aux = 0;
+        String aux2 = "";
+        for (int i = 0; i < str.length(); i++) {
+            aux = (int) str.charAt(i);// converte cada char da string em int
+            aux += cesarKey; // Aumenta 3 do char convertido em inteiro
+            char b = (char) aux;// converte o int incrementado em char.
+            aux2 += String.valueOf(b);// armazena o resultado na variavel aux2
+        }
+        return aux2;
+    }
+    public static String descriptografaSenha(String str){
+        int aux = 0;
+        String aux2 = "";
+        for (int i = 0; i < str.length(); i++) {
+            aux = (int) str.charAt(i);// converte cada char da string em int
+            aux -= cesarKey; // Aumenta 3 do char convertido em inteiro
+            char b = (char) aux;// converte o int incrementado em char.
+            aux2 += String.valueOf(b);// armazena o resultado na variavel aux2
+        }
+        return aux2;
+    }
+
+
+
+
+
+
+
+
 }
