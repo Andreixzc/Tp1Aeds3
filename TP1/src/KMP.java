@@ -1,19 +1,13 @@
-// JAVA program for implementation of KMP padraotern
-// searching algorithm
-
-class KMP_String_Matching {
+class KMP {
 	void KMPSearch(String padrao, String texto) {
 		int M = padrao.length();
 		int N = texto.length();
 
-		// create lps[] that will hold the longest
-		// prefix suffix values for padraotern
+		// lps[] vai guardar o maior sufixo encontrado
 		int lps[] = new int[M];
 		int j = 0; // index for padrao[]
 
-		// Preprocess the padraotern (calculate lps[]
-		// array)
-		computeLPSArray(padrao, M, lps);
+		armazenaSufixo(padrao, M, lps);
 
 		int i = 0; // index for texto[]
 		while ((N - i) >= (M - j)) {
@@ -28,8 +22,6 @@ class KMP_String_Matching {
 
 			// mismatch after j matches
 			else if (i < N && padrao.charAt(j) != texto.charAt(i)) {
-				// Do not match lps[0..lps[j-1]] characters,
-				// they will match anyway
 				if (j != 0)
 					j = lps[j - 1];
 				else
@@ -38,13 +30,11 @@ class KMP_String_Matching {
 		}
 	}
 
-	void computeLPSArray(String padrao, int M, int lps[]) {
-		// length of the previous longest prefix suffix
+	void armazenaSufixo(String padrao, int M, int lps[]) {
+		// lenght do maior sufixo
 		int len = 0;
 		int i = 1;
-		lps[0] = 0; // lps[0] is always 0
-
-		// the loop calculates lps[i] for i = 1 to M-1
+		lps[0] = 0; // lPS Sempre começa com 0
 		while (i < M) {
 			if (padrao.charAt(i) == padrao.charAt(len)) {
 				len++;
@@ -52,15 +42,12 @@ class KMP_String_Matching {
 				i++;
 			} else // (padrao[i] != padrao[len])
 			{
-				// This is tricky. Consider the example.
-				// AAACAAAA and i = 7. The idea is similar
-				// to search step.
+
 				if (len != 0) {
 					len = lps[len - 1];
 
-					// Also, note that we do not increment
-					// i here
-				} else // if (len == 0)
+
+				} else // se o lenght for 0
 				{
 					lps[i] = len;
 					i++;
